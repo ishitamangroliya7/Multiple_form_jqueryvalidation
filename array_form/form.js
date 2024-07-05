@@ -1,10 +1,8 @@
 $(document).ready(function () {
     let formCount = 1;
-    const maxForms = 4;
 
     // Function to add a new doctor form
     $('#addDoctorForm').click(function () {
-        if (formCount < maxForms) {
             formCount++;
             let formHtml = `
                 <div class="doctor-form" id="doctorForm${formCount}">
@@ -34,9 +32,6 @@ $(document).ready(function () {
             $('#formContainer').append(formHtml);
             // Apply validation rules to all forms
             applyValidationRules();
-        } else {
-            alert('Maximum of 4 forms allowed.');
-        }
     });
 
     // jQuery Validation rules
