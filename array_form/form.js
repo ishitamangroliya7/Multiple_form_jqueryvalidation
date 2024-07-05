@@ -1,88 +1,137 @@
-$(document).ready(function () {
-    let formCount = 1;
+ $(document).ready(function () {
+                // Initialize form validation on the studentForm element
+                $("#studentForm").validate({
+                    // Specify validation rules
+                    rules: {
+                        "name[0]": {
+                            required: true,
+                            minlength: 2
+                        },
+                        "phone[0]": {
+                            require_from_group: [1, ".phone-group"],
+                            minlength: 10
+                        },
+                        "mobile[0]": {
+                            require_from_group: [1, ".phone-group"],
+                            minlength: 10
+                        },
+                        "home[0]": {
+                            require_from_group: [1, ".phone-group"],
+                            minlength: 10
+                        },
+                        "email[0]": {
+                            required: true,
+                            email: true
+                        },
+                        "qualification[0]": {
+                            required: true
+                        }
+                    },
+                    // Specify validation error messages
+                    messages: {
+                        "name[0]": {
+                            required: "Please enter student's name",
+                            minlength: "Name must consist of at least 2 characters"
+                        },
+                        "email[0]": {
+                            required: "Please enter email address",
+                            email: "Please enter a valid email address"
+                        },
+                        "qualification[0]": {
+                            required: "Please select qualification"
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    invalidHandler: function (event, validator) {
+                        console.log(validator.currentElements.prevObject.valid());
+                        if (validator.currentElements && validator.currentElements.prevObject)
+                            validator.currentElements.prevObject[0].valid();
+                    }
+                });
 
-    // Function to add a new doctor form
-    $('#addDoctorForm').click(function () {
-            formCount++;
-            let formHtml = `
-                <div class="doctor-form" id="doctorForm${formCount}">
-                    <h4>Doctor ${formCount}</h4>
-                    <div class="form-group">
-                        <label for="name${formCount}">Name</label>
-                        <input type="text" class="form-control" id="name${formCount}" name="name[]">
+                // Add new student form
+                $("#addStudentForm").click(function () {
+                    var newIndex = $(".student-form").length;
+                    var newField = `
+                    <hr>
+                <div class="student-form pt-2 pb-2" id="studentForm${newIndex + 1}">
+                    <h5>Student ${newIndex + 1}</h5>
+                    <div class="formrow">
+                        <div class="form-group">
+                            <label for="name${newIndex + 1}">Name</label>
+                            <input type="text" class="form-control" id="name${newIndex + 1}" name="name[${newIndex}]">
+                        </div>
+                        <div class="form-group">
+                            <label for="email${newIndex + 1}">Email</label>
+                            <input type="email" class="form-control" id="email${newIndex + 1}" name="email[${newIndex}]">
+                        </div>
+                        <div class="form-group">
+                            <label for="qualification${newIndex + 1}">Qualification</label>
+                            <select class="form-control" id="qualification${newIndex + 1}" name="qualification[${newIndex}]">
+                                <option value="">Select</option>
+                                <option value="graduate">Graduate</option>
+                                <option value="postgraduate">Postgraduate</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="phone${formCount}">Phone</label>
-                        <input type="text" class="form-control" id="phone${formCount}" name="phone[]">
+                    <div class="formrow">
+                        <div class="form-group">
+                            <label for="phone${newIndex + 1}">Phone</label>
+                            <input type="text" class="form-control phone-group-${newIndex}" id="phone${newIndex + 1}" name="phone[${newIndex}]">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile${newIndex + 1}">Mobile</label>
+                            <input type="text" class="form-control phone-group-${newIndex}" id="mobile${newIndex + 1}" name="mobile[${newIndex}]">
+                        </div>
+                        <div class="form-group">
+                            <label for="home${newIndex + 1}">Home</label>
+                            <input type="text" class="form-control phone-group-${newIndex}" id="home${newIndex + 1}" name="home[${newIndex}]">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="email${formCount}">Email</label>
-                        <input type="email" class="form-control" id="email${formCount}" name="email[]">
-                    </div>
-                    <div class="form-group">
-                        <label for="qualification${formCount}">Qualification</label>
-                        <select class="form-control" id="qualification${formCount}" name="qualification[]">
-                            <option value="">Select</option>
-                            <option value="mbbs">MBBS</option>
-                            <option value="bhms">BHMS</option>
-                        </select>
-                    </div>
-                </div>
-            `;
-            $('#formContainer').append(formHtml);
-            // Apply validation rules to all forms
-            applyValidationRules();
-    });
+                </div>`;
 
-    // jQuery Validation rules
-    function applyValidationRules() {
-        $('#doctorForm').validate({
-            rules: {
-                'name[]': {
-                    required: true,
-                    minlength: 3
-                },
-                'phone[]': {
-                    required: true,
-                    digits: true,
-                    minlength: 10,
-                    maxlength: 10
-                },
-                'email[]': {
-                    required: true,
-                    email: true
-                },
-                'qualification[]': {
-                    required: true
-                }
-            },
-            messages: {
-                'name[]': {
-                    required: "Please enter the name",
-                    minlength: "Name must be at least 3 characters long"
-                },
-                'phone[]': {
-                    required: "Please enter the phone number",
-                    digits: "Please enter only digits",
-                    minlength: "Phone number must be 10 digits long",
-                    maxlength: "Phone number must be 10 digits long"
-                },
-                'email[]': {
-                    required: "Please enter the email",
-                    email: "Please enter a valid email address"
-                },
-                'qualification[]': {
-                    required: "Please select the qualification"
-                }
-            },
-            errorElement: 'span',
-            errorPlacement: function (error, element) {
-                error.addClass('text-danger');
-                element.closest('.form-group').append(error);
-            }
-        });
-    }
+                    $("#formContainer").append(newField);
 
-    // Initialize validation rules on page load
-    applyValidationRules();
-});
+                    // Add validation rules for new fields
+                    $(`[name="name[${newIndex}]"]`).rules("add", {
+                        required: true, minlength: 2,
+                        messages: {
+                            required: "Please enter student's name",
+                            minlength: "Name must consist of at least 2 characters"
+                        }
+                    });
+                    $(`[name="phone[${newIndex}]"]`).rules("add", {
+                        require_from_group: [1, `.phone-group-${newIndex}`], minlength: 10
+                    });
+                    $(`[name="mobile[${newIndex}]"]`).rules("add", {
+                        require_from_group: [1, `.phone-group-${newIndex}`], minlength: 10
+                    });
+                    $(`[name="home[${newIndex}]"]`).rules("add", {
+                        require_from_group: [1, `.phone-group-${newIndex}`], minlength: 10
+                    });
+                    $(`[name="email[${newIndex}]"]`).rules("add", {
+                        required: true,
+                        email: true,
+                        messages: {
+                            required: "Please enter email address",
+                            email: "Please enter a valid email address"
+                        }
+                    });
+                    $(`[name="qualification[${newIndex}]"]`).rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Please select qualification"
+                        }
+                    });
+                });
+            });
